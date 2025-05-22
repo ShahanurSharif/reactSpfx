@@ -10,14 +10,6 @@
         }
       ]
     },
-    "hello-world-web-part": {
-      "components": [
-        {
-          "entrypoint": "./lib/webparts/helloWorld/HelloWorldWebPart.js",
-          "manifest": "./src/webparts/helloWorld/HelloWorldWebPart.manifest.json"
-        }
-      ]
-    }
   },
   "externals": {},
   "localizedResources": {
