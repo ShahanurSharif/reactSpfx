@@ -7,19 +7,30 @@ import "@pnp/sp/webs";
 import "@pnp/sp/lists";
 import "@pnp/sp/items";
 import { useEffect } from "react";
-import {DocumentCard, DocumentCardDetails, DocumentCardTitle} from "@fluentui/react";
+import {DocumentCard, DocumentCardDetails, DocumentCardTitle, Dropdown, IDropdownOption} from "@fluentui/react";
 
 const Faq: React.FC<ISimpleCrudProps> = (props: ISimpleCrudProps) => {
   const LIST_NAME: string = "FAQ";
   const _sp: SPFI = getSP(props.context);
 
+  const [lists, setLists] = React.useState<IDropdownOption[]>([]);
+  const [selectedList, setSelectedList] = React.useState<IDropdownOption | undefined>(undefined);
   const [faqItems, setFAQItems] = React.useState<IFAQ[]>([]);
-
+  
+  const getLists = async () =>{
+    const lists = await _sp.web.lists.select('Id,title').filter('Hidden eq false')();
+    console.log(lists);
+    setLists(lists.map((item: any) => ({
+        key: item.Id,
+        text: item.Title,
+    })));
+  }
   const getFAQItems = async () => {
     const items = await _sp.web.lists.getByTitle(LIST_NAME)
       .items.select()
       .orderBy("Letter")();
     // console.log(items);
+    
     setFAQItems(items.map((item: any) => ({
       Id: item.Id,
       title: item.Title,
@@ -29,11 +40,19 @@ const Faq: React.FC<ISimpleCrudProps> = (props: ISimpleCrudProps) => {
   };
 
   useEffect(() => {
-    getFAQItems();
+    getLists(); 
+    getFAQItems();  
   }, []);
 
   return (
     <>
+      <div>
+        <Dropdown label="Select a list" 
+                  options={lists} selectedKey={selectedList} 
+                  onChange={(_, option)=>setSelectedList(option?.key as string)}
+                    placeholder="Select a list"
+        ></Dropdown>
+      </div>
       <div className="ms-Grid" dir="ltr">
         <div className="ms-Grid-row">
           <h2>Faq</h2>

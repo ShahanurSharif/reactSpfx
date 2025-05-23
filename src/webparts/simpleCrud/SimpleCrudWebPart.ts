@@ -30,7 +30,7 @@ export default class SimpleCrudWebPart extends BaseClientSideWebPart<ISimpleCrud
         environmentMessage: this._environmentMessage,
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
         userDisplayName: this.context.pageContext.user.displayName,
-        context: this.context
+        context: this.context,
       }
     );
 
