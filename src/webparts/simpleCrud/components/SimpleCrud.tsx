@@ -16,14 +16,21 @@ const Faq: React.FC<ISimpleCrudProps> = (props: ISimpleCrudProps) => {
   const [lists, setLists] = React.useState<IDropdownOption[]>([]);
   const [selectedList, setSelectedList] = React.useState<string | number | undefined>(undefined);
   const [faqItems, setFAQItems] = React.useState<IFAQ[]>([]);
-  
-  const getLists = async () =>{
-    const lists = await _sp.web.lists.select('Id,Title').filter('Hidden eq false')();
-    console.log(lists);
-    setLists(lists.map((item: any) => ({
+
+  const getLists = async () => {
+    try {
+      // Re-initialize SP each time to ensure it's available
+      const sp = getSP(props.context);
+
+      const lists = await sp.web.lists.select('Id,Title').filter('Hidden eq false')();
+      console.log(lists);
+      setLists(lists.map((item: any) => ({
         key: item.Id,
         text: item.Title,
-    })));
+      })));
+    } catch (error) {
+      console.error("Error fetching lists:", error);
+    }
   }
   const getFAQItems = async () => {
     const items = await _sp.web.lists.getByTitle(LIST_NAME)
