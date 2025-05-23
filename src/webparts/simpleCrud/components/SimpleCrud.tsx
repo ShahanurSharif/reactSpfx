@@ -14,11 +14,11 @@ const Faq: React.FC<ISimpleCrudProps> = (props: ISimpleCrudProps) => {
   const _sp: SPFI = getSP(props.context);
 
   const [lists, setLists] = React.useState<IDropdownOption[]>([]);
-  const [selectedList, setSelectedList] = React.useState<IDropdownOption | undefined>(undefined);
+  const [selectedList, setSelectedList] = React.useState<string | number | undefined>(undefined);
   const [faqItems, setFAQItems] = React.useState<IFAQ[]>([]);
   
   const getLists = async () =>{
-    const lists = await _sp.web.lists.select('Id,title').filter('Hidden eq false')();
+    const lists = await _sp.web.lists.select('Id,Title').filter('Hidden eq false')();
     console.log(lists);
     setLists(lists.map((item: any) => ({
         key: item.Id,
