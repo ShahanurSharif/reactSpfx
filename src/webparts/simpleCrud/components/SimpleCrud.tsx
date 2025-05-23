@@ -1,56 +1,57 @@
 import * as React from 'react';
-// import styles from './SimpleCrud.module.scss';
 import type { ISimpleCrudProps } from './ISimpleCrudProps';
-import {SPFI} from "@pnp/sp";
-import {IFAQ} from "../../../interfaces";
-import {getSP} from "../../../pnpjsConfig";
+import { SPFI } from "@pnp/sp";
+import { IFAQ } from "../../../interfaces";
+import { getSP } from "../../../pnpjsConfig";
 import "@pnp/sp/webs";
 import "@pnp/sp/lists";
 import "@pnp/sp/items";
-import {useEffect} from "react";
-// import { escape } from '@microsoft/sp-lodash-subset';
+import { useEffect } from "react";
+import {DocumentCard, DocumentCardDetails, DocumentCardTitle} from "@fluentui/react";
 
 const Faq: React.FC<ISimpleCrudProps> = (props: ISimpleCrudProps) => {
-  
-  // const LOG_SOURCE: string = "SimpleCrudWebPart";
   const LIST_NAME: string = "FAQ";
-  const _sp:SPFI = getSP(props.context)
-  
+  const _sp: SPFI = getSP(props.context);
+
   const [faqItems, setFAQItems] = React.useState<IFAQ[]>([]);
+
   const getFAQItems = async () => {
-    console.log("getFAQItems", _sp)
     const items = await _sp.web.lists.getByTitle(LIST_NAME)
-        .items.select()
-        .orderBy("Letter")
-        ();
-    
-    console.log('items', items)
-    
-    setFAQItems((await items).map((item: any) => {
-        return {
-            Id: item.Id,
-            title: item.Title,
-            body: item.Body,
-            letter: item.Letter,
-        }
-    }))
-  }
+      .items.select()
+      .orderBy("Letter")();
+    // console.log(items);
+    setFAQItems(items.map((item: any) => ({
+      Id: item.Id,
+      title: item.Title,
+      body: item.Body,
+      letter: item.Letter,
+    })));
+  };
 
   useEffect(() => {
-    getFAQItems()
+    getFAQItems();
   }, []);
 
   return (
-      faqItems.map((o:IFAQ, index:number)=>{
-          return (
-              <>
-                  {faqItems.map((o: IFAQ, index: number) => (
-                      <div key={o.Id ?? index}>hello</div>
-                  ))}
-              </>
-          )
-      })
-  )
-}
+    <>
+      <div className="ms-Grid" dir="ltr">
+        <div className="ms-Grid-row">
+          <h2>Faq</h2>
+          {faqItems.map((o: IFAQ, index: number) => (
+            <div className="ms-Grid-col ms-sm6 ms-md4 ms-lg3" key={o.Id ?? index}>
+              <DocumentCard>
+                <DocumentCardDetails>
+                  <DocumentCardTitle title={`ID: ${o.Id}`} />
+                  <DocumentCardTitle title={`Title: ${o.title}`} />
+                  <DocumentCardTitle title={`Letter: ${o.letter}`} />
+                </DocumentCardDetails>
+              </DocumentCard>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+};
 
 export default Faq;
